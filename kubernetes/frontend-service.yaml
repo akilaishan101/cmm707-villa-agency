@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: villa-frontend-service
+  namespace: villa-agency
+  labels:
+    app: villa-frontend
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: villa-frontend
+
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: http

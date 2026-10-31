@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: villa-analytics-service
+  namespace: villa-agency
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: villa-analytics-service
+  template:
+    metadata:
+      labels:
+        app: villa-analytics-service
+    spec:
+      containers:
+        - name: analytics-service
+          image: docker.io/akila101/villa-analytics-service:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: villa-clickhouse-secret
+          env:
+            - name: ALLOWED_ORIGINS
+              value: "http://localhost:8100,http://localhost:8080"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: villa-analytics-service
+  namespace: villa-agency
+spec:
+  type: ClusterIP
+  selector:
+    app: villa-analytics-service
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

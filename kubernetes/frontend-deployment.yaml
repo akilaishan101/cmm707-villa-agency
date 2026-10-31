@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: villa-frontend
+  namespace: villa-agency
+  labels:
+    app: villa-frontend
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: villa-frontend
+
+  template:
+    metadata:
+      labels:
+        app: villa-frontend
+
+    spec:
+      containers:
+        - name: villa-frontend
+          image: docker.io/akila101/villa-frontend:v2
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 80
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
