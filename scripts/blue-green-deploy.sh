@@ -118,6 +118,6 @@ if [[ "$source_deployment" != "$target_deployment" ]]; then
 fi
 
 echo "Service $service now routes to $target_label"
-kubectl get service "$service" deployment/"$target_deployment" \
+kubectl get service/"$service" deployment/"$target_deployment" \
   --namespace "$namespace" \
   --output wide
