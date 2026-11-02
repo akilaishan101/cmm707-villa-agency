@@ -81,7 +81,7 @@ https://templatemo.com/tm-591-villa-agency
                       <li><a href="properties.html">Properties</a></li>
                       <li><a href="property-details.html">Property Details</a></li>
                       <li><a href="contact.html" class="active">Contact Us</a></li>
-                      <li><a href="#enquiry-form"><i class="fa fa-calendar"></i> Schedule a visit</a></li>
+                      <li><a href="#"><i class="fa fa-calendar"></i> Schedule a visit</a></li>
                   </ul>   
                     <a class='menu-trigger'>
                         <span>Menu</span>
@@ -130,48 +130,35 @@ https://templatemo.com/tm-591-villa-agency
           </div>
         </div>
         <div class="col-lg-6">
-          <form id="enquiry-form">
+          <form id="contact-form" action="" method="post">
             <div class="row">
               <div class="col-lg-12">
                 <fieldset>
-                  <label for="property-id">Property ID</label>
-                  <input type="number" name="property_id" id="property-id" min="1" value="1" required>
+                  <label for="name">Full Name</label>
+                  <input type="name" name="name" id="name" placeholder="Your Name..." autocomplete="on" required>
                 </fieldset>
               </div>
               <div class="col-lg-12">
                 <fieldset>
-                  <label for="customer-name">Full Name</label>
-                  <input type="text" name="customer_name" id="customer-name" placeholder="Your name..." autocomplete="name" required>
+                  <label for="email">Email Address</label>
+                  <input type="text" name="email" id="email" pattern="[^ @]*@[^ @]*" placeholder="Your E-mail..." required="">
                 </fieldset>
               </div>
               <div class="col-lg-12">
                 <fieldset>
-                  <label for="customer-email">Email Address</label>
-                  <input type="email" name="customer_email" id="customer-email" placeholder="Your email..." autocomplete="email" required>
-                </fieldset>
-              </div>
-              <div class="col-lg-12">
-                <fieldset>
-                  <label for="customer-contact">Contact Number</label>
-                  <input type="tel" name="customer_contact" id="customer-contact" placeholder="Your phone number..." autocomplete="tel" required>
-                </fieldset>
-              </div>
-              <div class="col-lg-12">
-                <fieldset>
-                  <label for="viewing-datetime">Preferred Viewing Date and Time</label>
-                  <input type="datetime-local" name="viewing_datetime" id="viewing-datetime" required>
+                  <label for="subject">Subject</label>
+                  <input type="subject" name="subject" id="subject" placeholder="Subject..." autocomplete="on" >
                 </fieldset>
               </div>
               <div class="col-lg-12">
                 <fieldset>
                   <label for="message">Message</label>
-                  <textarea name="message" id="message" placeholder="Tell us about your visit..." required></textarea>
+                  <textarea name="message" id="message" placeholder="Your Message"></textarea>
                 </fieldset>
               </div>
               <div class="col-lg-12">
                 <fieldset>
-                  <button type="submit" id="form-submit" class="orange-button">Schedule Visit</button>
-                  <p id="form-status" role="status" aria-live="polite"></p>
+                  <button type="submit" id="form-submit" class="orange-button">Send Message</button>
                 </fieldset>
               </div>
             </div>
@@ -204,7 +191,6 @@ https://templatemo.com/tm-591-villa-agency
   <script src="assets/js/owl-carousel.js"></script>
   <script src="assets/js/counter.js"></script>
   <script src="assets/js/custom.js"></script>
-  <script src="assets/js/enquiry.js"></script>
   <script src="assets/js/analytics.js"></script>
 
   </body>
