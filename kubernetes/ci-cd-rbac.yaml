@@ -29,21 +29,17 @@ rules:
   - apiGroups:
       - ""
     resources:
+      - services/proxy
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
       - pods
     verbs:
       - get
       - list
       - watch
-      - create
-      - delete
-  - apiGroups:
-      - ""
-    resources:
-      - pods/attach
-      - pods/log
-    verbs:
-      - get
-      - create
   - apiGroups:
       - ""
     resources:

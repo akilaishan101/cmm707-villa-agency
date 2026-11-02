@@ -35,34 +35,18 @@ kubectl patch service "$service" \
   --type=merge \
   --patch="{\"spec\":{\"selector\":{\"app\":\"$target_deployment\"}}}"
 
-smoke_pod="rollback-${target_colour}-$(date +%s)"
-smoke_phase="CreateFailed"
+smoke_succeeded=false
+for attempt in 1 2 3 4 5 6; do
+  if kubectl get --raw \
+    "/api/v1/namespaces/$namespace/services/http:$service:80/proxy$health_path"; then
+    echo
+    smoke_succeeded=true
+    break
+  fi
+  sleep 5
+done
 
-if kubectl run "$smoke_pod" \
-  --namespace "$namespace" \
-  --image=curlimages/curl:8.12.1 \
-  --restart=Never \
-  --command -- \
-  curl -fsS "http://$service$health_path"; then
-  smoke_phase="Pending"
-  for attempt in $(seq 1 60); do
-    smoke_phase="$(kubectl get pod "$smoke_pod" \
-      --namespace "$namespace" \
-      --output jsonpath='{.status.phase}' 2>/dev/null || true)"
-    if [[ "$smoke_phase" == "Succeeded" || "$smoke_phase" == "Failed" ]]; then
-      break
-    fi
-    sleep 2
-  done
-fi
-
-kubectl logs "$smoke_pod" --namespace "$namespace" 2>/dev/null || true
-kubectl delete pod "$smoke_pod" \
-  --namespace "$namespace" \
-  --ignore-not-found \
-  --wait=false > /dev/null 2>&1 || true
-
-if [[ "$smoke_phase" != "Succeeded" ]]; then
+if [[ "$smoke_succeeded" != "true" ]]; then
   echo "Rollback smoke test failed; restoring service $service to $current_label" >&2
   kubectl patch service "$service" \
     --namespace "$namespace" \
