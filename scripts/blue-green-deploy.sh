@@ -87,15 +87,33 @@ kubectl patch service "$service" \
   --patch="{\"spec\":{\"selector\":{\"app\":\"$target_label\"}}}"
 
 smoke_pod="smoke-${target_colour}-$(date +%s)"
-if ! kubectl run "$smoke_pod" \
+smoke_phase="CreateFailed"
+
+if kubectl run "$smoke_pod" \
   --namespace "$namespace" \
   --image=curlimages/curl:8.12.1 \
   --restart=Never \
-  --rm \
-  --attach \
-  --pod-running-timeout=2m \
   --command -- \
   sh -c "for attempt in 1 2 3 4 5 6; do curl -fsS http://$service$health_path && exit 0; sleep 5; done; exit 1"; then
+  smoke_phase="Pending"
+  for attempt in $(seq 1 60); do
+    smoke_phase="$(kubectl get pod "$smoke_pod" \
+      --namespace "$namespace" \
+      --output jsonpath='{.status.phase}' 2>/dev/null || true)"
+    if [[ "$smoke_phase" == "Succeeded" || "$smoke_phase" == "Failed" ]]; then
+      break
+    fi
+    sleep 2
+  done
+fi
+
+kubectl logs "$smoke_pod" --namespace "$namespace" 2>/dev/null || true
+kubectl delete pod "$smoke_pod" \
+  --namespace "$namespace" \
+  --ignore-not-found \
+  --wait=false > /dev/null 2>&1 || true
+
+if [[ "$smoke_phase" != "Succeeded" ]]; then
   echo "Smoke test failed; restoring service $service to $active_label" >&2
   kubectl patch service "$service" \
     --namespace "$namespace" \
